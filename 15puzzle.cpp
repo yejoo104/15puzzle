@@ -15,6 +15,49 @@ int main (int arg, char** argv)
   board = makeboard(rows, cols);
 
   printboard(board);
+
+  // Find where zero is (Try and make this more efficient)
+  int blankrow;
+  int blankcol;
+  for (int i = 0; i < board.size(); i++)
+    for (int j = 0; j < board[i].size(); j++)
+      if (board[i][j] == 0)
+      {
+        blankrow = i;
+        blankcol = j;
+      }
+
+  while (true)
+  {
+    cout << "Use Arrow Keys to Move.";
+    int a = getchar();
+    int b = getchar();
+    int c = getchar();
+    int d = getchar();
+
+    if (a != 27 || b != 91 || d != 10) continue;
+    if (c < 65 || c > 68) continue;
+
+    int changerow = 0;
+    int changecol = 0;
+
+    if (c == 65) changerow = 1;
+    if (c == 66) changerow = -1;
+    if (c == 67) changecol = -1;
+    if (c == 68) changecol = 1;
+
+    // If Direction is Out of Array, CONTINUE
+    if (blankrow + changerow < 0 || blankrow + changerow >= board.size()) continue;
+    if (blankcol + changecol < 0 || blankcol + changecol >= board[0].size()) continue;
+
+    // Move the blank cell and update row/cell
+    board[blankrow][blankcol] = board[blankrow + changerow][blankcol + changecol];
+    blankrow = blankrow + changerow;
+    blankcol = blankcol + changecol;
+    board[blankrow][blankcol] = 0;
+
+    printboard(board);
+  } 
 }
 
 void printboard (vector <vector <int> > &board)

@@ -16,18 +16,23 @@ int main (int arg, char** argv)
 
   printboard(board);
 
-  // Find where zero is (Try and make this more efficient)
+  // Find where zero is and count how many cells are aligned
   int blankrow;
   int blankcol;
+  int count = 0;
   for (int i = 0; i < board.size(); i++)
     for (int j = 0; j < board[i].size(); j++)
+    {
       if (board[i][j] == 0)
       {
         blankrow = i;
         blankcol = j;
       }
 
-  while (true)
+      if (board[i][j] == i * cols + j + 1) count++;
+    }
+
+  while (count < rows * cols - 1)
   {
     cout << "Use Arrow Keys to Move.";
     int a = getchar();
@@ -50,14 +55,20 @@ int main (int arg, char** argv)
     if (blankrow + changerow < 0 || blankrow + changerow >= board.size()) continue;
     if (blankcol + changecol < 0 || blankcol + changecol >= board[0].size()) continue;
 
-    // Move the blank cell and update row/cell
-    board[blankrow][blankcol] = board[blankrow + changerow][blankcol + changecol];
-    blankrow = blankrow + changerow;
-    blankcol = blankcol + changecol;
+    // Move the blank cell and update row/cell as well as count
+    int newrow = blankrow + changerow;
+    int newcol = blankcol + changecol;
+    if (board[newrow][newcol] == newrow * cols + newcol + 1) count--;
+    if (board[newrow][newcol] == blankrow * cols + blankcol + 1) count++;
+    board[blankrow][blankcol] = board[newrow][newcol];
+    blankrow = newrow;
+    blankcol = newcol;
     board[blankrow][blankcol] = 0;
 
     printboard(board);
-  } 
+  }
+
+  cout << "YOU WIN" << endl;
 }
 
 void printboard (vector <vector <int> > &board)

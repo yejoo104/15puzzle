@@ -83,9 +83,37 @@ int main (int arg, char** argv)
         app.draw(s);
       }
 
-    app.display();
-
     if (count >= rows * cols - 1) break;
+
+    app.display();
+  }
+
+  // Winner Message
+  Font font;
+  font.loadFromFile("Ka Blam.ttf");
+  Text winner;
+  winner.setFont(font);
+  winner.setString("YOU WIN");
+  winner.setCharacterSize(100);
+  winner.setFillColor(Color::White);
+  winner.setStyle(Text::Bold);
+  winner.setPosition(400, 400);
+  winner.setOrigin(winner.getLocalBounds().width / 2.0f, winner.getLocalBounds().height / 2.0f);
+
+  while(app.isOpen())
+  {
+    Event e;
+    while (app.pollEvent(e))
+    {
+      if (e.type == Event::Closed) app.close();
+    }
+
+    app.clear(Color::White);
+    s.setTextureRect(IntRect(0, 0, cols * w, rows * w));
+    s.setPosition(0, 0);
+    app.draw(s);
+    app.draw(winner);
+    app.display();
   }
 }
 

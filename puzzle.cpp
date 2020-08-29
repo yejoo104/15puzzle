@@ -10,24 +10,41 @@ vector <vector <int> > makeboard(int rows, int cols);
 
 int main (int arg, char** argv)
 {
+  // Take input for row numbers and column numbers
+  cout << "Number of rows? ";
   int rows;
   cin >> rows;
+  cout << "Number of columns? ";
   int cols;
   cin >> cols;
 
+  // Make Board
   vector <vector <int> > board (rows, vector<int> (cols));
   board = makeboard(rows, cols);
 
+  // Take Input Image
   Texture t;
   t.loadFromFile("moongchi1.JPG");
   Sprite s(t);
+
+  // Decide sizes for Puzzle
   int imagewidth = s.getLocalBounds().width;
   int imageheight = s.getLocalBounds().height;
-
   float width = imagewidth / cols;
   float height = imageheight / rows;
-
   RenderWindow app(VideoMode(imagewidth, imageheight), "Puzzle");
+
+  // Winner Message
+  Font font;
+  font.loadFromFile("Ka Blam.ttf");
+  Text winner;
+  winner.setFont(font);
+  winner.setString("YOU WIN");
+  winner.setCharacterSize(imageheight / 10);
+  winner.setFillColor(Color::White);
+  winner.setStyle(Text::Bold);
+  winner.setPosition(imagewidth / 2.0f, imageheight / 2.0f);
+  winner.setOrigin(winner.getLocalBounds().width / 2.0f, winner.getLocalBounds().height / 2.0f);
 
   // Find where zero is and count how many cells are aligned
   int blankrow;
@@ -45,6 +62,9 @@ int main (int arg, char** argv)
       if (board[i][j] == i * cols + j + 1) count++;
     }
 
+  // Variable for whether you've won
+  bool won = false;
+
   while (app.isOpen())
   {
     Event e;
@@ -52,7 +72,7 @@ int main (int arg, char** argv)
     {
       if (e.type == Event::Closed) app.close();
 
-      if (e.type == Event::KeyPressed)
+      if (!won && e.type == Event::KeyPressed)
       {
         int changerow = 0;
         int changecol = 0;
@@ -90,7 +110,10 @@ int main (int arg, char** argv)
         app.draw(s);
       }
 
+    if (won) app.draw(winner);
     app.display();
+
+    if (count >= rows * cols - 1) won = true;
   }
 }
 

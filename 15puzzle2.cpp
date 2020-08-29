@@ -16,7 +16,7 @@ int main (int arg, char** argv)
   vector <vector <int> > board (rows, vector <int> (cols));
   board = makeboard(rows, cols);
 
-  int w = 800;
+  int w = 200;
   Texture t;
   t.loadFromFile("dogboard.jpg");
   Sprite s(t);
@@ -32,9 +32,15 @@ int main (int arg, char** argv)
 
     app.clear(Color::White);
 
-    s.setTextureRect(IntRect(0, 0, 800, 800));
-    s.setPosition(0, 0);
-    app.draw(s);
+    for (int i = 0; i < board.size(); i++)
+      for (int j = 0; j < board.size(); j++)
+      {
+        if (board[i][j] == 0) s.setTextureRect(IntRect(3 * w, 3 * w, w, w));
+        else s.setTextureRect(IntRect(w * ((board[i][j] + 3) % 4), w * ((board[i][j] - 1) / 4), w, w));
+        s.setPosition(j * w, i * w);
+        app.draw(s);
+      }
+
     app.display();
   }
 }

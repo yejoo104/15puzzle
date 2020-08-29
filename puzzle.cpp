@@ -10,17 +10,24 @@ vector <vector <int> > makeboard(int rows, int cols);
 
 int main (int arg, char** argv)
 {
-  int rows = 4;
-  int cols = 4;
+  int rows;
+  cin >> rows;
+  int cols;
+  cin >> cols;
 
-  vector <vector <int> > board (rows, vector <int> (cols));
+  vector <vector <int> > board (rows, vector<int> (cols));
   board = makeboard(rows, cols);
 
-  int w = 200;
   Texture t;
-  t.loadFromFile("dogboard.jpg");
+  t.loadFromFile("moongchi1.JPG");
   Sprite s(t);
-  RenderWindow app(VideoMode(800, 800), "15 Puzzle");
+  int imagewidth = s.getLocalBounds().width;
+  int imageheight = s.getLocalBounds().height;
+
+  float width = imagewidth / cols;
+  float height = imageheight / rows;
+
+  RenderWindow app(VideoMode(imagewidth, imageheight), "Puzzle");
 
   // Find where zero is and count how many cells are aligned
   int blankrow;
@@ -77,42 +84,12 @@ int main (int arg, char** argv)
     for (int i = 0; i < board.size(); i++)
       for (int j = 0; j < board[i].size(); j++)
       {
-        if (board[i][j] == 0) s.setTextureRect(IntRect(3 * w, 3 * w, w, w));
-        else s.setTextureRect(IntRect(w * ((board[i][j] + 3) % 4), w * ((board[i][j] - 1) / 4), w, w));
-        s.setPosition(j * w, i * w);
+        if (board[i][j] == 0) continue;
+        else s.setTextureRect(IntRect(width * ((board[i][j] + cols - 1) % cols), height * ((board[i][j] - 1) / cols), width, height));
+        s.setPosition(j * width, i * height);
         app.draw(s);
       }
 
-    if (count >= rows * cols - 1) break;
-
-    app.display();
-  }
-
-  // Winner Message
-  Font font;
-  font.loadFromFile("Ka Blam.ttf");
-  Text winner;
-  winner.setFont(font);
-  winner.setString("YOU WIN");
-  winner.setCharacterSize(100);
-  winner.setFillColor(Color::White);
-  winner.setStyle(Text::Bold);
-  winner.setPosition(400, 400);
-  winner.setOrigin(winner.getLocalBounds().width / 2.0f, winner.getLocalBounds().height / 2.0f);
-
-  while(app.isOpen())
-  {
-    Event e;
-    while (app.pollEvent(e))
-    {
-      if (e.type == Event::Closed) app.close();
-    }
-
-    app.clear(Color::White);
-    s.setTextureRect(IntRect(0, 0, cols * w, rows * w));
-    s.setPosition(0, 0);
-    app.draw(s);
-    app.draw(winner);
     app.display();
   }
 }

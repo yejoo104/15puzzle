@@ -22,12 +22,54 @@ int main (int arg, char** argv)
   Sprite s(t);
   RenderWindow app(VideoMode(800, 800), "15 Puzzle");
 
+  // Find where zero is and count how many cells are aligned
+  int blankrow;
+  int blankcol;
+  int count = 0;
+  for (int i = 0; i < board.size(); i++)
+    for (int j = 0; j < board[i].size(); j++)
+    {
+      if (board[i][j] == 0)
+      {
+        blankrow = i;
+        blankcol = j;
+      }
+
+      if (board[i][j] == i * cols + j + 1) count++;
+    }
+
   while (app.isOpen())
   {
     Event e;
     while (app.pollEvent(e))
     {
       if (e.type == Event::Closed) app.close();
+
+      if (e.type == Event::KeyPressed)
+      {
+        int changerow = 0;
+        int changecol = 0;
+
+        if (e.key.code == Keyboard::Up) changerow = 1;
+        else if (e.key.code == Keyboard::Down) changerow = -1;
+        else if (e.key.code == Keyboard::Left) changecol = 1;
+        else if (e.key.code == Keyboard::Right) changecol = -1;
+        else continue;
+
+        // If Direction is Out of Array, CONTINUE
+        if (blankrow + changerow < 0 || blankrow + changerow >= board.size()) continue;
+        if (blankcol + changecol < 0 || blankcol + changecol >= board[0].size()) continue;
+
+        // Move the blank cell and update row/cell as well as count
+        int newrow = blankrow + changerow;
+        int newcol = blankcol + changecol;
+        if (board[newrow][newcol] == newrow * cols + newcol + 1) count--;
+        if (board[newrow][newcol] == blankrow * cols + blankcol + 1) count++;
+        board[blankrow][blankcol] = board[newrow][newcol];
+        blankrow = newrow;
+        blankcol = newcol;
+        board[blankrow][blankcol] = 0;
+      }
     }
 
     app.clear(Color::White);
@@ -42,6 +84,8 @@ int main (int arg, char** argv)
       }
 
     app.display();
+
+    if (count >= rows * cols - 1) break;
   }
 }
 
